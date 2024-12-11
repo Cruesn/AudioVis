@@ -29,8 +29,6 @@ def visualize_audio(CHUNK_SIZE=1024):
                 print("Loopback device not found. Exiting...")
                 exit()
 
-        print(f"Recording from: ({default_speakers['index']}) {default_speakers['name']}")
-
         def callback(in_data, frame_count, time_info, status):
             try:
                 #clears the terminal at each loop
@@ -47,7 +45,7 @@ def visualize_audio(CHUNK_SIZE=1024):
                 freqs = freqs[:len(freqs) // 2]
 
                 # Define frequency bands (in Hz)
-                bands = generate_bands(0, 6400, 20)
+                bands = generate_bands(0, 6400, 20) #the last is the number of bands def: 20
 
                 bar_values = []
                 for band_start, band_end in bands:
