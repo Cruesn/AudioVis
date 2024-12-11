@@ -1,12 +1,9 @@
 import shutil
-
-from colorama import Fore, Style, init
+from colorama import Fore, Style
 import time
 import numpy as np
 import pyaudiowpatch as pyaudio
 
-# Initialize colorama
-init(autoreset=True)
 def generate_bands(start_freq, end_freq, num_bands):
     """
     Divides the frequency range between start_freq and end_freq into num_bands equal sized sections.
@@ -36,7 +33,9 @@ def visualize_audio(CHUNK_SIZE=1024):
 
         def callback(in_data, frame_count, time_info, status):
             try:
+                #clears the terminal at each loop
                 print('\033c', end='')
+
                 data = np.frombuffer(in_data, dtype=np.int16)
 
                 # Perform Fourier transform and get the magnitudes
@@ -60,24 +59,27 @@ def visualize_audio(CHUNK_SIZE=1024):
                 # Normalize and create bars
                 max_amplitude = max(bar_values) if bar_values else 1
                 bars = [int((value / max_amplitude) * 150) for value in bar_values]
-                bars.pop(0)
-                print(f"Calculated bars: {bars}")
+                bars.pop(0) #pops first bar its allways at 100%
+
+                print(f"Calculated bars: {bars}") #if u don't want this, comment it out!
+
                 terminal_width = shutil.get_terminal_size().columns
                 # Display bars with colors
                 for bar in bars:
-                    if bar < 15:
+                    if bar < 15: #you can set the value as needed
                         color = Fore.GREEN
-                    elif bar < 30:
+                    elif bar < 30: #you can set the value as needed
                         color = Fore.YELLOW
                     else:
                         color = Fore.RED
                     print(f"\r{' ' * terminal_width}", end="") #don't know if this works
-                    print(f"\r{color}{'#' * bar} {Style.RESET_ALL}")
-                time.sleep(0.05)
+                    print(f"\r{color}{'#' * bar} {Style.RESET_ALL}") #prints each bar
+                time.sleep(0.05) #you can set the value as needed
                 return (in_data, pyaudio.paContinue)
             except Exception as e:
                 print(f'an Error occurred: {type(e), e}')
 
+        #the main star in this script
         with p.open(format=pyaudio.paInt16,
                     channels=default_speakers["maxInputChannels"],
                     rate=int(default_speakers["defaultSampleRate"]),
